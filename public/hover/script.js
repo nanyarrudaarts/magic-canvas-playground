@@ -20,9 +20,9 @@
     extension: ".jpg",
     padLength: 3,
     baseFrame: 25,        // frame exibido em repouso
-    frameDuration: 70,    // ms por frame em 1×
+    frameDuration: 72,    // ms por frame em 1× (micro-interaction, não GIF)
     crossfade: true,      // mistura suave entre frames vizinhos
-    rushFactor: 2.2,      // acelera o encerramento quando outro objeto aguarda
+
   };
 
   const DEFAULTS = { speed: 1, precision: 100 };
@@ -228,7 +228,6 @@
       state: STATE.PLAYING_TO_PAUSE,
       pos: 0,
       skipPause: hovered !== hotspot, // saiu antes de chegar à pausa → vai direto ao fim
-      rush: false,
     };
     lastTime = null;
     scheduleRender();
@@ -252,7 +251,7 @@
     const playing = seq.state === STATE.PLAYING_TO_PAUSE || seq.state === STATE.PLAYING_TO_END;
 
     if (playing) {
-      const durPerFrame = CONFIG.frameDuration / speed / (seq.rush ? CONFIG.rushFactor : 1);
+      const durPerFrame = CONFIG.frameDuration / speed; // ritmo constante, sem aceleração
       seq.pos += dt / durPerFrame;
 
       if (seq.state === STATE.PLAYING_TO_PAUSE && !seq.skipPause && seq.pos >= pauseIdx) {
@@ -293,8 +292,13 @@
     }
 
     if (seq.hotspot === hotspot) {
-      // voltou ao mesmo objeto: só reinicia se já tiver terminado
-      if (seq.state === STATE.FINISHED) startSequence(hotspot);
+      // voltou ao mesmo objeto
+      if (seq.state === STATE.PAUSED_AT_TARGET) return;   // já congelado: nada muda
+      if (seq.state === STATE.PLAYING_TO_PAUSE) {
+        seq.skipPause = false;                            // volta a respeitar a pausa
+        return;
+      }
+      startSequence(hotspot);                             // terminando/terminado: recomeça
       return;
     }
 
@@ -303,13 +307,13 @@
       return;
     }
 
-    // outro objeto ainda em movimento: encerra o atual (mais rápido) e depois inicia o novo
+    // outro objeto ainda em movimento: deixa terminar no ritmo normal e depois inicia o novo
     pendingStart = hotspot;
-    seq.rush = true;
     if (seq.state === STATE.PAUSED_AT_TARGET) seq.state = STATE.PLAYING_TO_END;
     else if (seq.state === STATE.PLAYING_TO_PAUSE) seq.skipPause = true;
     scheduleRender();
   }
+
 
   function onHotspotLeave(hotspot) {
     if (pendingStart === hotspot) pendingStart = null;
