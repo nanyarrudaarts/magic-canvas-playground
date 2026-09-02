@@ -52,12 +52,8 @@ body.scroll-done #scroll-hint {
 }
 
 /* A dica de hover só aparece depois do handoff no frame 024 */
-#hint {
+body:not(.scroll-done) #hint {
   opacity: 0;
-}
-
-body.scroll-done #hint {
-  opacity: 0.75;
 }
 
 /* ---------- Contêiner centralizado e responsivo ---------- */

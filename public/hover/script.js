@@ -79,9 +79,16 @@
   const precisionValue = document.getElementById("precision-value");
   const resetButton = document.getElementById("reset");
 
+  // ---------- Etapa de scroll (frames 001–024) ----------
+  // Camada anterior e independente: controla exclusivamente os frames
+  // 001→024. No frame 024 acontece o HANDOFF — o frame fica estático e o
+  // sistema de hover existente (intocado) assume o controle.
+  const SCROLL = { start: 1, end: 24 };
+
   // ---------- Estado ----------
   const frames = new Map();
   const neededFrames = [];
+  for (let n = SCROLL.start; n <= SCROLL.end; n++) neededFrames.push(n);
   HOTSPOTS.forEach((h) => {
     for (let n = h.start; n <= h.end; n++) neededFrames.push(n);
   });
