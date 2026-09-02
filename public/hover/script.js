@@ -515,7 +515,14 @@
     await preloadFrames();
 
     loader.classList.add("hidden");
-    drawStatic(CONFIG.baseFrame, null);
+
+    // Etapa 1 — Scroll-driven (001–024): o frame exibido depende do scroll.
+    container.classList.add("scroll-phase");
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    // Etapa 2 — Hover-driven existente (025+): permanece intocado e assume
+    // o controle automaticamente após o handoff no frame 024.
     bindEvents();
   }
 
