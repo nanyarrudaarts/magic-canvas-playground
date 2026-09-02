@@ -14,15 +14,16 @@ html {
 
 html,
 body {
-  background: #cc6b74; /* mesma cor de fundo dos frames */
+  background: #c86f75; /* cor exata do fundo dos frames (amostrada) */
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   color: #fff;
 }
 
 /* ---------- Etapa de scroll (frames 001–024) ---------- */
-/* Trilho alto: o scroll da página controla o progresso da sequência */
+/* Trilho alto: o scroll da página controla o progresso da sequência.
+   500vh = scrub mais lento e deliberado (referência: scroll-reveal-animation) */
 #scroll-track {
-  height: 400vh;
+  height: 500vh;
 }
 
 /* O contêiner da animação fica fixo enquanto o trilho rola
@@ -96,7 +97,7 @@ body:not(.scroll-done) #hint {
   align-items: center;
   justify-content: center;
   gap: 14px;
-  background: rgba(204, 107, 116, 0.92);
+  background: rgba(200, 111, 117, 0.92);
   transition: opacity 0.4s ease;
 }
 
