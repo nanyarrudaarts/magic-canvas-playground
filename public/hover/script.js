@@ -20,9 +20,9 @@
     extension: ".jpg",
     padLength: 3,
     baseFrame: 25,        // frame exibido em repouso
-    frameDuration: 70,    // ms por frame em 1×
+    frameDuration: 72,    // ms por frame em 1× (micro-interaction, não GIF)
     crossfade: true,      // mistura suave entre frames vizinhos
-    rushFactor: 2.2,      // acelera o encerramento quando outro objeto aguarda
+
   };
 
   const DEFAULTS = { speed: 1, precision: 100 };
