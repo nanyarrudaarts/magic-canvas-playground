@@ -105,6 +105,8 @@
   let rafId = null;
   let lastTime = null;
 
+  let scrollPhase = true;    // true enquanto o scroll controla os frames 001–024
+
   let speed = DEFAULTS.speed;
   let precision = DEFAULTS.precision / 100;
 
