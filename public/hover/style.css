@@ -7,13 +7,57 @@
   padding: 0;
 }
 
+html {
+  /* clip (e não hidden) para não quebrar o position: sticky do contêiner */
+  overflow-x: clip;
+}
+
 html,
 body {
-  height: 100%;
   background: #cc6b74; /* mesma cor de fundo dos frames */
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   color: #fff;
-  overflow: hidden;
+}
+
+/* ---------- Etapa de scroll (frames 001–024) ---------- */
+/* Trilho alto: o scroll da página controla o progresso da sequência */
+#scroll-track {
+  height: 400vh;
+}
+
+/* O contêiner da animação fica fixo enquanto o trilho rola
+   (especificidade maior para sobrepor o position: relative original) */
+#scroll-track #animation-container {
+  position: sticky;
+  top: 0;
+}
+
+/* Durante a fase de scroll, o toque na tela rola a página em vez de
+   acionar os hotspots (que só são ativados após o handoff) */
+#animation-container.scroll-phase {
+  touch-action: pan-y;
+}
+
+#scroll-hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.75;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+body.scroll-done #scroll-hint {
+  opacity: 0;
+}
+
+/* A dica de hover só aparece depois do handoff no frame 024 */
+body:not(.scroll-done) #hint {
+  opacity: 0;
 }
 
 /* ---------- Contêiner centralizado e responsivo ---------- */

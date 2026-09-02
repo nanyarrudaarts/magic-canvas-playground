@@ -7,8 +7,11 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div id="scroll-track">
   <main id="animation-container" aria-label="Animação controlada pelo movimento do mouse">
     <canvas id="animation-canvas" width="1600" height="900"></canvas>
+
+    <p id="scroll-hint" aria-hidden="true">Role para revelar</p>
 
     <div id="loader" role="status" aria-live="polite">
       <div class="loader-bar"><span id="loader-fill"></span></div>
@@ -41,6 +44,7 @@
       <button id="reset" type="button">Restaurar padrão</button>
     </section>
   </main>
+  </div>
 
   <script src="script.js" defer></script>
 

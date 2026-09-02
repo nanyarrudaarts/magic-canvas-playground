@@ -68,6 +68,7 @@
   const container = document.getElementById("animation-container");
   const canvas = document.getElementById("animation-canvas");
   const ctx = canvas.getContext("2d");
+  const scrollTrack = document.getElementById("scroll-track");
   const loader = document.getElementById("loader");
   const loaderFill = document.getElementById("loader-fill");
   const loaderText = document.getElementById("loader-text");
@@ -79,9 +80,16 @@
   const precisionValue = document.getElementById("precision-value");
   const resetButton = document.getElementById("reset");
 
+  // ---------- Etapa de scroll (frames 001–024) ----------
+  // Camada anterior e independente: controla exclusivamente os frames
+  // 001→024. No frame 024 acontece o HANDOFF — o frame fica estático e o
+  // sistema de hover existente (intocado) assume o controle.
+  const SCROLL = { start: 1, end: 24 };
+
   // ---------- Estado ----------
   const frames = new Map();
   const neededFrames = [];
+  for (let n = SCROLL.start; n <= SCROLL.end; n++) neededFrames.push(n);
   HOTSPOTS.forEach((h) => {
     for (let n = h.start; n <= h.end; n++) neededFrames.push(n);
   });
@@ -97,6 +105,8 @@
   let lastDrawKey = "";      // evita redesenho sem mudança
   let rafId = null;
   let lastTime = null;
+
+  let scrollPhase = true;    // true enquanto o scroll controla os frames 001–024
 
   let speed = DEFAULTS.speed;
   let precision = DEFAULTS.precision / 100;
@@ -365,9 +375,50 @@
   }
 
   function handlePointer(clientX, clientY) {
+    // Durante a etapa de scroll (frames 001–024) os hotspots ainda não
+    // estão ativos: o hover existente só assume após o handoff no 024.
+    if (scrollPhase) return;
     // mousemove serve apenas para saber SOBRE QUAL região o cursor está;
     // enter/leave são disparados somente quando a região muda.
     setHoveredHotspot(hotspotAt(clientX, clientY));
+  }
+
+  // ---------- Etapa de scroll: scrub dos frames 001–024 ----------
+
+  function handleScroll() {
+    const max = scrollTrack.offsetHeight - window.innerHeight;
+    const progress = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 1;
+
+    if (progress >= 1) {
+      // HANDOFF: frame 024 fica estático; o sistema de hover assume.
+      if (scrollPhase) {
+        scrollPhase = false;
+        container.classList.remove("scroll-phase");
+        document.body.classList.add("scroll-done");
+      }
+      drawStatic(SCROLL.end, null);
+      return;
+    }
+
+    if (!scrollPhase) {
+      // Usuário rolou de volta para cima: interrompe qualquer sequência de
+      // hover em andamento e devolve o controle dos frames 001–024 ao scroll.
+      scrollPhase = true;
+      seq = null;
+      pendingStart = null;
+      hovered = null;
+      pendingHotspot = null;
+      if (pendingTimer !== null) {
+        clearTimeout(pendingTimer);
+        pendingTimer = null;
+      }
+      container.classList.remove("over-hotspot");
+      container.classList.add("scroll-phase");
+      document.body.classList.remove("scroll-done");
+    }
+
+    const idx = SCROLL.start + Math.floor(progress * (SCROLL.end - SCROLL.start));
+    drawStatic(Math.min(SCROLL.end, idx), null);
   }
 
   function bindEvents() {
@@ -464,7 +515,14 @@
     await preloadFrames();
 
     loader.classList.add("hidden");
-    drawStatic(CONFIG.baseFrame, null);
+
+    // Etapa 1 — Scroll-driven (001–024): o frame exibido depende do scroll.
+    container.classList.add("scroll-phase");
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    // Etapa 2 — Hover-driven existente (025+): permanece intocado e assume
+    // o controle automaticamente após o handoff no frame 024.
     bindEvents();
   }
 
