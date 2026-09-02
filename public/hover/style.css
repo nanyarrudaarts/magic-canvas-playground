@@ -1,0 +1,198 @@
+/* ---------- Reset / base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  background: #cc6b74; /* mesma cor de fundo dos frames */
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #fff;
+  overflow: hidden;
+}
+
+/* ---------- Contêiner centralizado e responsivo ---------- */
+#animation-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  user-select: none;
+  touch-action: none; /* permite controlar via toque também */
+}
+
+/* Hotspots são invisíveis; apenas o cursor muda ao passar sobre um objeto */
+#animation-container.over-hotspot {
+  cursor: pointer;
+}
+
+/* O canvas mantém a proporção 16:9 e nunca ultrapassa a viewport */
+#animation-canvas {
+  display: block;
+  width: min(100vw, calc(100vh * 16 / 9));
+  height: auto;
+  aspect-ratio: 16 / 9;
+  max-height: 100vh;
+}
+
+/* ---------- Loader ---------- */
+#loader {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: rgba(204, 107, 116, 0.92);
+  transition: opacity 0.4s ease;
+}
+
+#loader.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader-bar {
+  width: min(280px, 70vw);
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.25);
+  overflow: hidden;
+}
+
+#loader-fill {
+  display: block;
+  width: 0%;
+  height: 100%;
+  background: #fff;
+  transition: width 0.15s linear;
+}
+
+#loader-text {
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---------- Dica ---------- */
+#hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.75;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+#animation-container.interacted #hint {
+  opacity: 0;
+}
+
+/* ---------- Painel de ajustes ---------- */
+#controls-toggle,
+#reset {
+  font: inherit;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+#controls-toggle:hover,
+#reset:hover {
+  background: rgba(0, 0, 0, 0.45);
+  border-color: #fff;
+}
+
+#controls-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 3;
+}
+
+#controls {
+  position: absolute;
+  top: 64px;
+  right: 20px;
+  z-index: 3;
+  width: min(280px, calc(100vw - 40px));
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+#controls.collapsed {
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+}
+
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.control-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.control output {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+
+.control small {
+  font-size: 0.65rem;
+  line-height: 1.4;
+  opacity: 0.6;
+}
+
+.control input[type="range"] {
+  width: 100%;
+  accent-color: #fff;
+  cursor: pointer;
+}
+
+#reset {
+  align-self: flex-start;
+}
+
+@media (max-width: 600px) {
+  #hint {
+    font-size: 0.65rem;
+    bottom: 16px;
+  }
+}
+
