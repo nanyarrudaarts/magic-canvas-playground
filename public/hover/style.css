@@ -25,8 +25,9 @@ body {
   height: 400vh;
 }
 
-/* O contêiner da animação fica fixo enquanto o trilho rola */
-#animation-container {
+/* O contêiner da animação fica fixo enquanto o trilho rola
+   (especificidade maior para sobrepor o position: relative original) */
+#scroll-track #animation-container {
   position: sticky;
   top: 0;
 }
